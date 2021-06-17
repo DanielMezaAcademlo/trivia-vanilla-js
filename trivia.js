@@ -1,3 +1,5 @@
+//MODULOS
+
 //ELEMENTOS HTML
 let triviaForm = document.getElementById("trivia");
 let questionsContainer = document.getElementById("questionsContent");
@@ -5,12 +7,13 @@ let amount = document.getElementById("amount");
 let category = document.getElementById("category");
 let difficulty = document.getElementById("difficulty");
 let type = document.getElementById("type");
-
+let answers = document.getElementsByClassName("answer");
 //VARIABLES DE CONTROL
 let questions;
 let qIndex = 0;
 let correct_index_answer;
-//FUNCIONES
+// //FUNCIONES
+
 let getAPIData = e => {
   e.preventDefault();
   let url = `https://opentdb.com/api.php?amount=${amount.value}&category=${category.value}&difficulty=${difficulty.value}&type=${type.value}`;
@@ -38,6 +41,8 @@ const startGame = () => {
     document.getElementById("2").innerText = "False";
     document.getElementById("3").style.display = "none";
     document.getElementById("4").style.display = "none";
+    if (currentQuestion.correct_answer === "True") correct_index = 1;
+    else correct_index = 2;
   } else {
     document.getElementById("1").style.display = "Block";
     document.getElementById("2").style.display = "Block";
@@ -55,9 +60,18 @@ const startGame = () => {
         currentQuestion.incorrect_answers[j];
       j++;
     }
-    debugger;
   }
 };
+
+let correctAnswer = id => {
+  console.log(id);
+};
+console.log(answers);
+
+for (let i = 0; i < answers.length; i++) {
+  const element = answers[i];
+  element.addEventListener("click", () => correctAnswer(answers[i].id));
+}
 
 //LISTENERS
 triviaForm.addEventListener("submit", getAPIData);

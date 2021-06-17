@@ -1,87 +1,80 @@
-// window.addEventListener("load", function() {});
-
-//Containers
+//ELEMENTOS HTML
 let triviaForm = document.getElementById("trivia");
-
 let questionsContainer = document.getElementById("questionsContent");
-
-//Variables para API
 let amount = document.getElementById("amount");
 let category = document.getElementById("category");
 let difficulty = document.getElementById("difficulty");
 let type = document.getElementById("type");
-
-//Elementos de HTML
-
-//Variables de Control
+let answers = document.getElementsByClassName("answer");
+//VARIABLES DE CONTROL
 let questions;
-let correct_index_answer;
 let qIndex = 0;
+let correct_index_answer;
+// //FUNCIONES
 
-//Funciones
-const getQuestions = e => {
+// let getAPIData = async e => {
+//   e.preventDefault();
+//   let url = `https://opentdb.com/api.php?amount=${amount.value}&category=${category.value}&difficulty=${difficulty.value}&type=${type.value}`;
+//   let response = await fetch(url);
+//   let data = await response.json();
+//   console.log(data);
+// };
+
+let getAPIData = e => {
   e.preventDefault();
-  const url = `https://opentdb.com/api.php?amount=${amount.value}&category=${category.value}&difficulty=${difficulty.value}&type=${type.value}`;
+  let url = `https://opentdb.com/api.php?amount=${amount.value}&category=${category.value}&difficulty=${difficulty.value}&type=${type.value}`;
   fetch(url)
     .then(response => {
       return response.json();
     })
     .then(data => {
-      console.log(url);
-      console.log(data);
       questions = data.results;
-      nextQuestions();
-    })
-    .catch(error => {
-      console.log(error);
+      startGame();
     });
 };
 
-const nextQuestions = () => {
-  if (qIndex == amount.value) {
-    showFinalResults();
-    return;
-  }
+const startGame = () => {
+  console.log(questions);
+  questionsContainer.style.display = "flex";
+  triviaForm.style.display = "none";
 
-  if (questions.length > 0) {
-    triviaForm.style.display = "none";
-    questionsContainer.style.display = "flex";
-    let currentQuestion = questions[qIndex];
-    document.getElementById("questionName").innerText =
-      currentQuestion.question;
+  //Variable para controlar preguntas una por una
+  let currentQuestion = questions[qIndex];
+  document.getElementById("questionName").innerText = currentQuestion.question;
 
-    if (currentQuestion.incorrect_answers.length == 1) {
-      document.getElementById(1).innerHTML = "True";
-      document.getElementById(2).innerHTML = "False";
-      document.getElementById(3).style.display = "none";
-      document.getElementById(4).style.display = "none";
-      if (currentQuestion.correct_answer === "True") correct_index_answer = 1;
-      else correct_index_answer = 2;
-    } else {
-      document.getElementById(3).style.display = "inline";
-      document.getElementById(4).style.display = "inline";
-      correct_index_answer = Math.floor(Math.random() * 4) + 1;
-      document.getElementById(correct_index_answer).innerHTML =
-        currentQuestion.correct_answer;
-      let j = 0;
-      for (let i = 1; i <= 4; i++) {
-        if (i == correct_index_answer) continue;
-        document.getElementById(i).innerHTML =
-          currentQuestion.incorrect_answers[j];
-        j++;
-      }
+  if (currentQuestion.incorrect_answers.length == 1) {
+    document.getElementById("1").innerText = "True";
+    document.getElementById("2").innerText = "False";
+    document.getElementById("3").style.display = "none";
+    document.getElementById("4").style.display = "none";
+  } else {
+    document.getElementById("1").style.display = "Block";
+    document.getElementById("2").style.display = "Block";
+    document.getElementById("3").style.display = "Block";
+    document.getElementById("4").style.display = "Block";
+
+    correct_index_answer = Math.floor(Math.random() * 4) + 1;
+    document.getElementById(correct_index_answer).innerText =
+      currentQuestion.correct_answer;
+    console.log(correct_index_answer);
+    let j = 0;
+    for (let i = 1; i <= 4; i++) {
+      if (i === correct_index_answer) continue;
+      document.getElementById(i).innerText =
+        currentQuestion.incorrect_answers[j];
+      j++;
     }
   }
-
-  document.getElementById("question_index").innerHTML = qIndex + 1;
-  document.getElementById("num_questions").innerHTML = amount.value;
-  console.log(questions);
-  console.log(correct_index_answer);
 };
 
-const showFinalResults = () => {
-  console.log("Listo");
+let correctAnswer = id => {
+  console.log(id);
 };
 
-//Eventos
-triviaForm.addEventListener("submit", getQuestions);
+for (let i = 0; i < answers.length; i++) {
+  const element = answers[i];
+  element.addEventListener("click", () => correctAnswer(answers[i].id));
+}
+
+//LISTENERS
+triviaForm.addEventListener("submit", getAPIData);
