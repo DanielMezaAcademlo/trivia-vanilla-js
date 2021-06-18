@@ -12,6 +12,7 @@ let answers = document.getElementsByClassName("answer");
 let questions;
 let qIndex = 0;
 let correct_index_answer;
+let score = 0;
 // //FUNCIONES
 
 let getAPIData = e => {
@@ -24,11 +25,11 @@ let getAPIData = e => {
     .then(data => {
       questions = data.results;
       startGame();
-    });
+    })
+    .catch(err => console.log(err));
 };
 
 const startGame = () => {
-  console.log(questions);
   questionsContainer.style.display = "flex";
   triviaForm.style.display = "none";
 
@@ -41,8 +42,8 @@ const startGame = () => {
     document.getElementById("2").innerText = "False";
     document.getElementById("3").style.display = "none";
     document.getElementById("4").style.display = "none";
-    if (currentQuestion.correct_answer === "True") correct_index = 1;
-    else correct_index = 2;
+    if (currentQuestion.correct_answer === "True") correct_index_answer = 1;
+    else correct_index_answer = 2;
   } else {
     document.getElementById("1").style.display = "Block";
     document.getElementById("2").style.display = "Block";
@@ -63,15 +64,43 @@ const startGame = () => {
   }
 };
 
-let correctAnswer = id => {
-  console.log(id);
+const selectAnswer = id => {
+  let answerId = id;
+  console.log(answerId);
+  if (answerId == correct_index_answer) {
+    score = score + 1;
+    console.log("Respuesta correcta !");
+  } else {
+    console.log("Respuesta incorrecta 💔");
+  }
+  console.log(qIndex == amount.value);
+
+  if (qIndex < amount.value - 1) {
+    qIndex++;
+    startGame();
+  } else if (qIndex == amount.value - 1) {
+    showResults(score);
+  }
 };
-console.log(answers);
+
+const showResults = () => {
+  console.log(`Juego terminado`);
+  // questionsContainer.innerHTML = "";
+  // let score = document.createElement("p");
+  // score.innerText = `Juego terminado, puntuación: ${score}`;
+
+  // let restartBtn = document.createElement("a");
+  // restartBtn.setAttribute("href", "index.html");
+
+  // questionsContainer.appendChild(score);
+  // questionsContainer.appendChild(restartBtn);
+};
+
+//FOR QUE RECORRA TODOS LOS BOTONES
 
 for (let i = 0; i < answers.length; i++) {
   const element = answers[i];
-  element.addEventListener("click", () => correctAnswer(answers[i].id));
+  element.addEventListener("click", () => selectAnswer(element.id));
 }
-
 //LISTENERS
 triviaForm.addEventListener("submit", getAPIData);
